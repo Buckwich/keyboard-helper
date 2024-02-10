@@ -1,0 +1,8 @@
+{
+  "name": "keymapFormatter",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/keymap-formatter/src",
+  "projectType": "application",
+  "targets": {},
+  "tags": []
+}
