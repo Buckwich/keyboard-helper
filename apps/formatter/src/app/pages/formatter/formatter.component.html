@@ -1,0 +1,32 @@
+<div>
+  <input
+    type="textarea"
+    id="keyboardInfo"
+    name="keyboardInfo"
+    [formControl]="keyboardInfoInputForm"
+  />
+  <!-- <div>{{ keyboardInfo | json }}</div> -->
+
+  <button (click)="doStuff()">format</button>
+  <h1>original</h1>
+  <keyboard-helper-keyboard-layout-renderer [keys]="keys">
+  </keyboard-helper-keyboard-layout-renderer>
+
+  <h1>alignY</h1>
+  <keyboard-helper-keyboard-layout-renderer [keys]="alignY(keys)">
+  </keyboard-helper-keyboard-layout-renderer>
+
+  <h1>normalizeKeyboardLayout</h1>
+  <keyboard-helper-keyboard-layout-renderer
+    [keys]="normalizeKeyboardLayout(keys)"
+  >
+  </keyboard-helper-keyboard-layout-renderer>
+
+  <h1>myNormalizer</h1>
+  <keyboard-helper-keyboard-layout-renderer [keys]="myNormalizer(keys)">
+  </keyboard-helper-keyboard-layout-renderer>
+
+  <h1>expected</h1>
+  <keyboard-helper-keyboard-layout-renderer [keys]="expectedKeys">
+  </keyboard-helper-keyboard-layout-renderer>
+</div>

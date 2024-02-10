@@ -1,0 +1,70 @@
+<div class="keymap-renderer">
+  <div class="keyboard-container">
+    <svg #svgRenderer>
+      <svg
+        *ngFor="let key of keys"
+        [attr.x]="key.x * 51"
+        [attr.y]="key.y * 51"
+        [attr.width]="key.width * 50 + key.width - 1"
+        [attr.height]="key.height * 50 + key.height - 1"
+        style="overflow: hidden"
+      >
+        <rect
+          [attr.width]="50 * key.width - 2 + key.width"
+          [attr.height]="50 * key.height - 2 + key.height"
+          [attr.fill]="secondaryColor(key.color)"
+          x="0.5"
+          y="0.5"
+          stroke="black"
+          rx="5"
+        />
+
+        <rect
+          [attr.width]="50 * key.width - 10"
+          [attr.height]="50 * key.height - 10"
+          [attr.fill]="key.color"
+          x="5"
+          y="5"
+          rx="2"
+        />
+
+        <text x="6" text-anchor="start" y="18" font-size="12">
+          {{ key.labels[0] }}
+          <title>{{ key.labels[0] }}</title>
+        </text>
+        <text x="25" text-anchor="center" y="18" font-size="12">
+          {{ key.labels[1] }}
+          <title>{{ key.labels[1] }}</title>
+        </text>
+        <text x="44" text-anchor="end" y="18" font-size="12">
+          {{ key.labels[2] }}
+          <title>{{ key.labels[2] }}</title>
+        </text>
+        <text x="6" text-anchor="start" y="31" font-size="12">
+          {{ key.labels[3] }}
+          <title>{{ key.labels[3] }}</title>
+        </text>
+        <text x="25" text-anchor="center" y="31" font-size="12">
+          {{ key.labels[4] }}
+          <title>{{ key.labels[4] }}</title>
+        </text>
+        <text x="44" text-anchor="end" y="31" font-size="12">
+          {{ key.labels[5] }}
+          <title>{{ key.labels[5] }}</title>
+        </text>
+        <text x="6" text-anchor="start" y="44" font-size="12">
+          {{ key.labels[6] }}
+          <title>{{ key.labels[6] }}</title>
+        </text>
+        <text x="25" text-anchor="center" y="44" font-size="12">
+          {{ key.labels[7] }}
+          <title>{{ key.labels[7] }}</title>
+        </text>
+        <text x="44" text-anchor="end" y="44" font-size="12">
+          {{ key.labels[8] }}
+          <title>{{ key.labels[8] }}</title>
+        </text>
+      </svg>
+    </svg>
+  </div>
+</div>
