@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@kcf/converter": ["libs/converter/src/index.ts"],
       "@keyboard-helper/keyboard-renderer": [
         "libs/keyboard-renderer/src/index.ts"
       ],
