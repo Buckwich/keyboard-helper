@@ -1,42 +1,48 @@
 import { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import {
-  Button,
-  ComboBox,
-  DropZone,
-  Input,
-  Label,
-  ListBox,
-  ListBoxItem,
-  Popover,
-  Select,
-  SelectValue,
-} from 'react-aria-components';
-import styles from './main.module.css';
-import { MyComboBox } from './my-combo-box';
+import { Button } from 'react-aria-components';
+
+import { KeyboardRenderer } from '@keyboard-helper/keyboard-renderer';
+import { KCFConverter } from '@kcf/converter';
+import JSON5 from 'json5';
 
 /* eslint-disable-next-line */
 export interface MainProps {}
 
 export function Main(props: MainProps) {
+  const [textAreaValue, setTextAreaValue] = useState('');
+
+  const handleTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextAreaValue(event.target.value);
+  };
+
+  let keyboard = undefined;
+  try {
+    keyboard = KCFConverter.qmkToKfc(JSON5.parse(textAreaValue));
+  } catch (e) {
+    console.log(e);
+  }
+
   return (
     <div className="max-w-full mx-auto">
-      <header className="p-4 text-lg font-bold">Main Header</header>
-      <main className="flex flex-wrap -mx-2 mt-4">
+      <header className="p-4 text-lg font-bold">KCF Formatter</header>
+      <main className="flex flex-wrap  mt-4">
         <div className="w-full md:w-1/2 px-2">
-          <div className="p-4">
-            <InputOrUrlCard></InputOrUrlCard>
+          <div className="">
+            <InputOrUrlCard value={textAreaValue} setValue={handleTextAreaChange}></InputOrUrlCard>
           </div>
         </div>
         <div className="w-full md:w-1/2 px-2">
-          <div className="p-4">Column 2 Content</div>
+          <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
+            {keyboard && <KeyboardRenderer keyboard={keyboard}></KeyboardRenderer>}
+          </div>
         </div>
       </main>
     </div>
   );
 }
 
-const InputOrUrlCard = () => {
+const InputOrUrlCard = ({ value, setValue }: any) => {
   const options = [
     { value: 'option1', label: 'Option 1' },
     { value: 'option2', label: 'Option 2' },
@@ -84,6 +90,8 @@ const InputOrUrlCard = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             rows={4}
             placeholder="Paste contents of your keyboard info.json file here"
+            value={value}
+            onChange={setValue}
           ></textarea>
         </div>
       </div>
