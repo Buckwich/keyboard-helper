@@ -7,6 +7,7 @@ import { KCFConverter } from '@kcf/converter';
 import JSON5 from 'json5';
 import { RadioButtonSelect } from './radio-select';
 import { KCFKeyboard, KCFKey } from '@keyboard-helper/keyboard-schema';
+import { toCode, toComment } from './to-code';
 
 export function Main() {
   const [keyboardTextAreaValue, setKeyboardTextAreaValue] = useState('');
@@ -116,7 +117,6 @@ export function Main() {
             )}
           </div>
         </div>
-
         <div className="w-full md:w-1/2 px-2">
           <div className="">
             <InputOrUrlCard value={keymapTextAreaValue} setValue={handleKeymapTextAreaChange}></InputOrUrlCard>
@@ -159,7 +159,16 @@ export function Main() {
               formName={'configAlgorithm'}
             ></RadioButtonSelect>
           </div>
-          <pre>{configAlgorithmValue}</pre>
+        </div>{' '}
+        <div className="w-full md:w-1/2 px-2">
+          <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
+            <h1>Code</h1>
+            <pre>{toCode(normalizedKeyboard?.layout || [])}</pre>
+          </div>
+          <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
+            <h1>Comment</h1>
+            <pre>{toComment(normalizedKeyboard?.layout || [])}</pre>
+          </div>
         </div>
       </main>
     </div>
@@ -188,7 +197,7 @@ function myNormalizer(keys: KCFKey[]): KCFKey[] {
       currentRow++;
     }
     currentKey.row = currentRow;
-    console.log({ i, l: currentKey.labels.mc?.text, row: currentRow, d: distance, currentKey, previousKey });
+    // console.log({ i, l: currentKey.labels.mc?.text, row: currentRow, d: distance, currentKey, previousKey });
   }
 
   return newKeys.map((key: KCFKey & { row: number }) => ({
