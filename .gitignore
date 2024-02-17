@@ -40,3 +40,5 @@ Thumbs.db
 
 .nx/cache
 .angular
+
+libs/qmk-typings/source-data/

@@ -1,11 +1,11 @@
-# qmk-typings
+# QMK Typings
 
-This library was generated with [Nx](https://nx.dev).
+https://github.com/qmk/qmk_firmware/tree/main/data
 
-## Building
+https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Fqmk%2Fqmk_firmware%2Ftree%2Fmain%2Fdata
 
-Run `nx build qmk-typings` to build the library.
+## Process
 
-## Running unit tests
-
-Run `nx test qmk-typings` to execute the unit tests via [Jest](https://jestjs.io).
+- Clone QMK firmware: `git clone git@github.com:qmk/qmk_firmware.git`
+- Move Data folder (assumes you are in a folder with both repos): `cp -r qmk_firmware/data/* keyboard-helper/libs/qmk-typings/source-data/`
+-
