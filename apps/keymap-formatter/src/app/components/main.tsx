@@ -5,22 +5,88 @@ import { Button } from 'react-aria-components';
 import { KeyboardRenderer } from '@keyboard-helper/keyboard-renderer';
 import { KCFConverter } from '@kcf/converter';
 import JSON5 from 'json5';
+import { RadioButtonSelect } from './radio-select';
+import { KCFKeyboard, KCFKey } from '@keyboard-helper/keyboard-schema';
 
-/* eslint-disable-next-line */
-export interface MainProps {}
+export function Main() {
+  const [keyboardTextAreaValue, setKeyboardTextAreaValue] = useState('');
+  const [keymapTextAreaValue, setKeymapTextAreaValue] = useState('');
 
-export function Main(props: MainProps) {
-  const [textAreaValue, setTextAreaValue] = useState('');
+  const [configAlgorithmValue, setConfigAlgorithmValue] = useState('row');
 
-  const handleTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTextAreaValue(event.target.value);
+  const handleKeyboardTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setKeyboardTextAreaValue(event.target.value);
+  };
+  const handleKeymapTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setKeymapTextAreaValue(event.target.value);
   };
 
   let keyboard = undefined;
   try {
-    keyboard = KCFConverter.qmkToKfc(JSON5.parse(textAreaValue));
+    keyboard = KCFConverter.qmkToKfc(JSON5.parse(keyboardTextAreaValue));
   } catch (e) {
+    keyboard = undefined;
     console.log(e);
+  }
+
+  let keymap: { layers: string[][] } | undefined = undefined;
+  try {
+    keymap = JSON5.parse(keymapTextAreaValue);
+  } catch (e) {
+    keymap = undefined;
+    console.log(e);
+  }
+
+  if (keyboard && keymap) {
+    if (keyboard.layout.length === keymap.layers[0].length) {
+      keyboard.layout.forEach((key, index) => {
+        key.labels.mc = {
+          ...key.labels.mc,
+          text: keymap?.layers[0][index] || '',
+        };
+      });
+    }
+  }
+
+  let normalizedKeyboard: KCFKeyboard | undefined = undefined;
+  if (keyboard) normalizedKeyboard = JSON.parse(JSON.stringify(keyboard)) as KCFKeyboard;
+  if (normalizedKeyboard) {
+    switch (configAlgorithmValue) {
+      case 'row':
+        normalizedKeyboard.layout = myNormalizer(normalizedKeyboard.layout);
+
+        break;
+      case 'round':
+        normalizedKeyboard.layout = normalizedKeyboard.layout.map((key, index) => {
+          return {
+            ...key,
+            x: Math.round(key.x),
+            y: Math.round(key.y),
+          };
+        });
+        break;
+      case 'floor':
+        normalizedKeyboard.layout = normalizedKeyboard.layout.map((key, index) => {
+          return {
+            ...key,
+            x: Math.floor(key.x),
+            y: Math.floor(key.y),
+          };
+        });
+        break;
+      case 'ceil':
+        normalizedKeyboard.layout = normalizedKeyboard.layout.map((key, index) => {
+          return {
+            ...key,
+            x: Math.ceil(key.x),
+            y: Math.ceil(key.y),
+          };
+        });
+        break;
+      default:
+        normalizedKeyboard = keyboard;
+        break;
+    }
   }
 
   return (
@@ -29,17 +95,107 @@ export function Main(props: MainProps) {
       <main className="flex flex-wrap  mt-4">
         <div className="w-full md:w-1/2 px-2">
           <div className="">
-            <InputOrUrlCard value={textAreaValue} setValue={handleTextAreaChange}></InputOrUrlCard>
+            <InputOrUrlCard value={keyboardTextAreaValue} setValue={handleKeyboardTextAreaChange}></InputOrUrlCard>
           </div>
         </div>
         <div className="w-full md:w-1/2 px-2">
           <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
-            {keyboard && <KeyboardRenderer keyboard={keyboard}></KeyboardRenderer>}
+            {keyboard ? (
+              <KeyboardRenderer keyboard={keyboard}></KeyboardRenderer>
+            ) : (
+              <div>
+                <p>
+                  To get started, please select your preferred keyboard or import a QMK info.json file from any URL. You
+                  can also paste the json content directly into the provided field.
+                </p>
+                <p>
+                  You can either select a keyboard from the list or paste a URL to a QMK info.json. Alternatively you
+                  can just paste the contents of the file directly.
+                </p>
+              </div>
+            )}
           </div>
+        </div>
+
+        <div className="w-full md:w-1/2 px-2">
+          <div className="">
+            <InputOrUrlCard value={keymapTextAreaValue} setValue={handleKeymapTextAreaChange}></InputOrUrlCard>
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 px-2">
+          <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
+            {normalizedKeyboard && <KeyboardRenderer keyboard={normalizedKeyboard}></KeyboardRenderer>}
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 px-2">
+          <div className="w-100 card mx-auto shadow-lg rounded-lg p-4">
+            <h1>Config</h1>
+            <h2>Normalisation Algorithm</h2>
+            <RadioButtonSelect
+              selectedOption={configAlgorithmValue}
+              setSelectedOption={setConfigAlgorithmValue}
+              options={[
+                {
+                  label: 'None',
+                  value: 'none',
+                },
+                {
+                  label: 'Row based',
+                  value: 'row',
+                },
+                {
+                  label: 'Rounding',
+                  value: 'round',
+                },
+                {
+                  label: 'Floorign',
+                  value: 'floor',
+                },
+                {
+                  label: 'Ceiling',
+                  value: 'ceil',
+                },
+              ]}
+              formName={'configAlgorithm'}
+            ></RadioButtonSelect>
+          </div>
+          <pre>{configAlgorithmValue}</pre>
         </div>
       </main>
     </div>
   );
+}
+
+function myNormalizer(keys: KCFKey[]): KCFKey[] {
+  const newKeys = JSON.parse(JSON.stringify(keys));
+  let currentRow = 0;
+
+  for (let i = 1; i < newKeys.length; i++) {
+    const currentKey = newKeys[i];
+    const previousKey = newKeys[i - 1];
+
+    if (currentKey.y === previousKey.y) {
+      currentKey.row = currentRow;
+      continue;
+    }
+
+    //distance calculation point to point
+    const distance = Math.sqrt(
+      Math.pow(currentKey.x - (previousKey.x + previousKey.w - 1), 2) +
+        Math.pow(currentKey.y - (previousKey.y + previousKey.h - 1), 2)
+    );
+    if (distance > 2) {
+      currentRow++;
+    }
+    currentKey.row = currentRow;
+    console.log({ i, l: currentKey.labels.mc?.text, row: currentRow, d: distance, currentKey, previousKey });
+  }
+
+  return newKeys.map((key: KCFKey & { row: number }) => ({
+    ...key,
+    y: key.row ?? 0,
+    currentRow: undefined,
+  }));
 }
 
 const InputOrUrlCard = ({ value, setValue }: any) => {
@@ -63,10 +219,10 @@ const InputOrUrlCard = ({ value, setValue }: any) => {
                 control: (provided, state) => ({
                   ...provided,
                   height: '100%',
-                  'border-bottom-right-radius': 0,
-                  'border-top-right-radius': 0,
-                  'border-top-left-radius': '8px',
-                  'border-bottom-left-radius': '8px',
+                  borderBottomRightRadius: 0,
+                  borderTopRightRadius: 0,
+                  borderTopLeftRadius: '8px',
+                  borderBottomLeftRadius: '8px',
                 }),
                 container: (provided, state) => ({
                   ...provided,

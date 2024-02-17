@@ -5,6 +5,9 @@ export interface KeyboardRendererProps {
 }
 
 export function KeyboardRenderer(props: KeyboardRendererProps) {
+  if (!props.keyboard.layout.length)
+    return <div>It looks like there a no keys in your keyboard. Are you sure you used a valid QMK info.json file?</div>;
+
   /* keyunit */
   const u = 50;
   /* padding x (left & right)*/
@@ -25,7 +28,7 @@ export function KeyboardRenderer(props: KeyboardRendererProps) {
   const fs = 12;
 
   const size = getSvgSize(props.keyboard.layout, u);
-  console.log(size);
+
   return (
     <svg
       width={size.svgWidth}
