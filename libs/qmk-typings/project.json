@@ -1,0 +1,23 @@
+{
+  "name": "qmk-typings",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/qmk-typings/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/qmk-typings",
+        "main": "libs/qmk-typings/src/index.ts",
+        "tsConfig": "libs/qmk-typings/tsconfig.lib.json",
+        "assets": ["libs/qmk-typings/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs qmk-typings {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}

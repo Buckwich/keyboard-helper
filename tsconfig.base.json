@@ -19,7 +19,8 @@
       "@keyboard-helper/keyboard-renderer": [
         "libs/keyboard-renderer/src/index.ts"
       ],
-      "@keyboard-helper/keyboard-schema": ["libs/keyboard-schema/src/index.ts"]
+      "@keyboard-helper/keyboard-schema": ["libs/keyboard-schema/src/index.ts"],
+      "qmk-typings": ["libs/qmk-typings/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
