@@ -5,7 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
   root: __dirname,
-  base: 'keymap-formatter',
+  // base: 'keymap-formatter',
   cacheDir: '../../node_modules/.vite/apps/keymap-formatter',
 
   server: {
