@@ -2,24 +2,7 @@ import JSON5 from 'json5';
 
 export async function getKeyboards() {
   console.log('fetching keyboards');
-  //   return [
-  //     {
-  //       name: '0_sixty/base',
-  //       path: 'keyboards/0_sixty/base/info.json',
-  //     },
-  //     {
-  //       name: '0_sixty/underglow',
-  //       path: 'keyboards/0_sixty/underglow/info.json',
-  //     },
-  //     {
-  //       name: '0xc7/61key',
-  //       path: 'keyboards/0xc7/61key/info.json',
-  //     },
-  //     {
-  //       name: '0xcb/1337',
-  //       path: 'keyboards/0xcb/1337/info.json',
-  //     },
-  //   ];
+
   return fetchJson('https://raw.githubusercontent.com/qmk-helper/qmk-database/master/keyboards.json');
 }
 
