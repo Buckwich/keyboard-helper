@@ -1,6 +1,6 @@
+# This workflow will build and deploy all frontend projects to GitHub Pages. Frontend projects are expected to have the nx tag `type:webapp`.
+
 name: Deploy all frontend projects to GitHub Pages
-description: |
-  This workflow will build and deploy all frontend projects to GitHub Pages. Frontend projects are expected to have the nx tag `type:webapp`.
 
 on:
   push:
