@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite';
 
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
   root: __dirname,
@@ -17,7 +18,7 @@ export default defineConfig({
     host: 'localhost',
   },
 
-  plugins: [nxViteTsPaths()],
+  plugins: [nxViteTsPaths(), svelte()],
 
   // Uncomment this if you are using workers.
   // worker: {
