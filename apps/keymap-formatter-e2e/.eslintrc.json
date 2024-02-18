@@ -8,6 +8,9 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["apps/keymap-formatter-e2e/tsconfig.*?.json"]
+      },
       "rules": {}
     },
     {
@@ -20,6 +23,9 @@
     },
     {
       "files": ["src/**/*.{ts,js,tsx,jsx}"],
+      "parserOptions": {
+        "project": "apps/keymap-formatter-e2e/tsconfig.*?.json"
+      },
       "rules": {}
     }
   ]

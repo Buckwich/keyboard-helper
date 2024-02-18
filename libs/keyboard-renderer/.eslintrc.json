@@ -1,6 +1,6 @@
 {
   "extends": [
-    "plugin:playwright/recommended",
+    "plugin:@nx/react",
     "../../.eslintrc.json",
     "../../.eslintrc.base.json"
   ],
@@ -16,10 +16,6 @@
     },
     {
       "files": ["*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["src/**/*.{ts,js,tsx,jsx}"],
       "rules": {}
     }
   ]

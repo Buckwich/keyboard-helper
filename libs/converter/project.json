@@ -1,0 +1,23 @@
+{
+  "name": "converter",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/converter/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/converter",
+        "main": "libs/converter/src/index.ts",
+        "tsConfig": "libs/converter/tsconfig.lib.json",
+        "assets": ["libs/converter/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs converter {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
