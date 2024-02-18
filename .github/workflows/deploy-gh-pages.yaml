@@ -4,7 +4,8 @@ description: |
 
 on:
   push:
-    branches: ['main']
+    #added cicd for testing. TODO remove before merge
+    branches: ['main', 'cicd']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
