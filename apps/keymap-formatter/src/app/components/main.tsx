@@ -1,33 +1,100 @@
-import { useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import { Button } from 'react-aria-components';
-
 import { KeyboardRenderer } from '@keyboard-helper/keyboard-renderer';
 import { KCFConverter } from '@kcf/converter';
 import JSON5 from 'json5';
 import { RadioButtonSelect } from './radio-select';
 import { KCFKeyboard, KCFKey } from '@keyboard-helper/keyboard-schema';
 import { toCode, toComment } from './to-code';
+import { ActionMeta, Options, PropsValue, SingleValue } from 'react-select/dist/declarations/src';
+import { getKeyboards, getKeymapsForKeyboard, validateUrl } from './api';
+
+type Option = { value: string; label: string };
 
 export function Main() {
+  const [keyboards, setKeyboards] = useState<
+    { label: string; path: string; value: string; keymapListUrl: string }[] | null
+  >(null);
+  useEffect(() => {
+    getKeyboards()
+      .then((response) => {
+        setKeyboards(
+          response.map(({ name, path }: { name: string; path: string }) => {
+            return {
+              value: `https://raw.githubusercontent.com/qmk/qmk_firmware/master/${path}`,
+              label: name,
+            };
+          })
+        );
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  const [keyboardUrlValue, setKeyboardUrlValue] = useState<Option | null>(null);
+  const [keymapUrlValue, setKeymapUrlValue] = useState<Option | null>(null);
+
+  const [keymaps, setKeymaps] = useState<Option[]>([]);
+  useEffect(() => {
+    setKeymaps([]);
+    setKeymapUrlValue(null);
+    setKeymapTextAreaValue('');
+    if (!keyboardUrlValue?.value) return;
+    if (keyboardUrlValue.label === keyboardUrlValue.value) return; //this is a manual added entry, no predefined keymaps exist
+    getKeymapsForKeyboard(keyboardUrlValue.label).then((response) => {
+      setKeymaps(
+        response.map(({ name, path }: { name: string; path: string }) => {
+          console.log({ name, path });
+          return {
+            value: `https://raw.githubusercontent.com/qmk-helper/qmk-database/master/keymaps/${keyboardUrlValue.label}/${name}.keymap.json`,
+            label: name,
+          };
+        })
+      );
+    });
+  }, [keyboardUrlValue]);
   const [keyboardTextAreaValue, setKeyboardTextAreaValue] = useState('');
   const [keymapTextAreaValue, setKeymapTextAreaValue] = useState('');
 
   const [configAlgorithmValue, setConfigAlgorithmValue] = useState('row');
 
-  const handleKeyboardTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setKeyboardTextAreaValue(event.target.value);
-  };
-  const handleKeymapTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setKeymapTextAreaValue(event.target.value);
-  };
+  async function handleKeyboardSelectChange(option: SingleValue<Option>, actionMeta: ActionMeta<Option>) {
+    setKeyboardUrlValue(option);
+
+    if (!option) return;
+
+    if (!validateUrl(option.value)) {
+      //TODO: show error message
+      console.error('Invalid URL: ', option.value);
+      return;
+    }
+
+    //TODO: show loading indicator
+    const keyboard = await fetch(option.value);
+    setKeyboardTextAreaValue(await keyboard.text());
+  }
+
+  async function handleKeymapSelectChange(option: SingleValue<Option>, actionMeta: ActionMeta<Option>) {
+    setKeymapUrlValue(option);
+
+    if (!option) return;
+
+    if (!validateUrl(option.value)) {
+      //TODO: show error message
+      console.error('Invalid URL: ', option.value);
+      return;
+    }
+
+    //TODO: show loading indicator
+    const keyboard = await fetch(option.value);
+    setKeymapTextAreaValue(await keyboard.text());
+  }
 
   let keyboard = undefined;
   try {
     keyboard = KCFConverter.qmkToKfc(JSON5.parse(keyboardTextAreaValue));
   } catch (e) {
     keyboard = undefined;
-    console.log(e);
+    // console.log(e);
   }
 
   let keymap: { layers: string[][] } | undefined = undefined;
@@ -35,7 +102,7 @@ export function Main() {
     keymap = JSON5.parse(keymapTextAreaValue);
   } catch (e) {
     keymap = undefined;
-    console.log(e);
+    // console.log(e);
   }
 
   if (keyboard && keymap) {
@@ -96,7 +163,21 @@ export function Main() {
       <main className="flex flex-wrap  mt-4">
         <div className="w-full md:w-1/2 px-2">
           <div className="">
-            <InputOrUrlCard value={keyboardTextAreaValue} setValue={handleKeyboardTextAreaChange}></InputOrUrlCard>
+            <InputOrUrlCard
+              options={keyboards ?? []}
+              selectValue={keyboardUrlValue}
+              onSelectValueChange={handleKeyboardSelectChange}
+              content={keyboardTextAreaValue}
+              onContentChange={setKeyboardTextAreaValue}
+              // onButtonClick={importKeyboard}
+              texts={{
+                selectPlaceholder: 'Select a keyboard or paste a URL',
+                selectCreateLabel: (inputValue) => `Use Url "${inputValue}"`,
+                textAreaPlaceholder: 'Paste contents of your keyboard info.json file here',
+                dividerText: 'OR',
+                // buttonText: 'Import',
+              }}
+            ></InputOrUrlCard>
           </div>
         </div>
         <div className="w-full md:w-1/2 px-2">
@@ -119,7 +200,21 @@ export function Main() {
         </div>
         <div className="w-full md:w-1/2 px-2">
           <div className="">
-            <InputOrUrlCard value={keymapTextAreaValue} setValue={handleKeymapTextAreaChange}></InputOrUrlCard>
+            <InputOrUrlCard
+              content={keymapTextAreaValue}
+              onContentChange={setKeymapTextAreaValue}
+              options={keymaps}
+              selectValue={keymapUrlValue}
+              onSelectValueChange={handleKeymapSelectChange}
+              // onButtonClick={importKeymap}
+              texts={{
+                selectPlaceholder: 'Select a keymap or paste a URL',
+                selectCreateLabel: (inputValue) => `Use Url "${inputValue}"`,
+                textAreaPlaceholder: 'Paste contents of your keymap info.json file here',
+                dividerText: 'OR',
+                // buttonText: 'Import',
+              }}
+            ></InputOrUrlCard>
           </div>
         </div>
         <div className="w-full md:w-1/2 px-2">
@@ -207,45 +302,66 @@ function myNormalizer(keys: KCFKey[]): KCFKey[] {
   }));
 }
 
-const InputOrUrlCard = ({ value, setValue }: any) => {
-  const options = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-    // Add more predefined options here
-  ];
+const InputOrUrlCard = ({
+  options,
+  content,
+  onContentChange,
+  selectValue,
+  onSelectValueChange,
+  // onButtonClick,
+  texts,
+}: {
+  options: Options<Option>;
+  content: string;
+  onContentChange: (content: string) => void;
+  selectValue: PropsValue<Option>;
+  onSelectValueChange: (option: SingleValue<Option>, actionMeta: ActionMeta<Option>) => void;
 
+  // onButtonClick: (e: PressEvent) => void;
+  texts: {
+    selectPlaceholder: string;
+    selectCreateLabel: (inputValue: string) => ReactNode;
+    textAreaPlaceholder: string;
+    dividerText: string;
+    // buttonText: string;
+  };
+}) => {
   return (
     <div className="card mx-auto shadow-lg rounded-lg p-4">
       <div className="mb-4 ">
-        <div className="join flex">
-          <div className="flex-1 ">
-            <CreatableSelect
-              formatCreateLabel={(inputValue) => `Use Url "${inputValue}"`}
-              placeholder="Select a keyboard or paste a URL"
-              options={options}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  height: '100%',
-                  borderBottomRightRadius: 0,
-                  borderTopRightRadius: 0,
-                  borderTopLeftRadius: '8px',
-                  borderBottomLeftRadius: '8px',
-                }),
-                container: (provided, state) => ({
-                  ...provided,
-                  height: '100%',
-                }),
-              }}
-            ></CreatableSelect>
-          </div>
-          <Button className="btn btn-md join-item">Import</Button>
-        </div>
+        {/* <div className="join flex">
+          <div className="flex-1 "> */}
+        <CreatableSelect
+          isClearable
+          formatCreateLabel={texts.selectCreateLabel}
+          placeholder={texts.selectPlaceholder}
+          options={options}
+          value={selectValue}
+          onChange={onSelectValueChange}
+          // styles={{
+          //   control: (provided, state) => ({
+          //     ...provided,
+          //     height: '100%',
+          //     borderBottomRightRadius: 0,
+          //     borderTopRightRadius: 0,
+          //     borderTopLeftRadius: '8px',
+          //     borderBottomLeftRadius: '8px',
+          //   }),
+          //   container: (provided, state) => ({
+          //     ...provided,
+          //     height: '100%',
+          //   }),
+          // }}
+        ></CreatableSelect>
+        {/* </div> */}
+        {/* <Button className="btn btn-md join-item" onPress={onButtonClick}>
+            {texts.buttonText}
+          </Button> */}
+        {/* </div> */}
 
         <div className="flex items-center gap-4 my-4">
           <div className="flex-1 border-t"></div>
-          <div className="">OR</div>
+          <div className="">{texts.dividerText}</div>
           <div className="flex-1 border-t "></div>
         </div>
 
@@ -254,9 +370,9 @@ const InputOrUrlCard = ({ value, setValue }: any) => {
             id="textareaInput"
             className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             rows={4}
-            placeholder="Paste contents of your keyboard info.json file here"
-            value={value}
-            onChange={setValue}
+            placeholder={texts.textAreaPlaceholder}
+            value={content}
+            onChange={(event) => onContentChange(event.target.value)}
           ></textarea>
         </div>
       </div>
