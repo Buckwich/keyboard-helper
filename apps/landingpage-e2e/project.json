@@ -1,0 +1,8 @@
+{
+  "name": "landingpage-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/landingpage-e2e/src",
+  "targets": {},
+  "implicitDependencies": ["landingpage"]
+}
