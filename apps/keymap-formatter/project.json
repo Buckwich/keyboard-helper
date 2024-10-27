@@ -4,5 +4,5 @@
   "sourceRoot": "apps/keymap-formatter/src",
   "projectType": "application",
   "targets": {},
-  "tags": []
+  "tags": ["type:webapp"]
 }
