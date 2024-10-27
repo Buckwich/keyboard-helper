@@ -1,0 +1,8 @@
+{
+  "name": "keyboardBuilder",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/keyboard-builder/src",
+  "projectType": "application",
+  "targets": {},
+  "tags": []
+}
