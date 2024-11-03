@@ -2403,6 +2403,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kcf-hub/kle-serial@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@kcf-hub/kle-serial/-/kle-serial-0.17.0.tgz#c72cc10c69a66892ac3f200d5a2ff609597b1b1c"
+  integrity sha512-mtFiAnpmPYdgcmRUFHsaw1zqJgorAh58GW/Nsn9Z9RRFCzxfJ4FG1eRU3vd2xCbDb2gRL0SdALn4iHpbc/yh+Q==
+
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"

@@ -12,6 +12,10 @@ export interface KCFKey {
   /*The height of the key, in key units.*/
   h: number;
 
+  col?: number;
+  row?: number;
+  led?: number;
+
   /*The absolute position of the second rectangle in the horizontal axis, in key units.*/
   x2?: number;
   /*The absolute position of the second rectangle in the vertical axis, in key units.*/

@@ -1,12 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.css';
-
-import NxWelcome from './nx-welcome';
+import Main from './main';
 
 export function App() {
   return (
     <div>
-      <NxWelcome title="keyboardBuilder" />
+      <Main></Main>
     </div>
   );
 }

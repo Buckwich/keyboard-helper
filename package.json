@@ -13,6 +13,7 @@
     "@angular/platform-browser": "~17.1.0",
     "@angular/platform-browser-dynamic": "~17.1.0",
     "@angular/router": "~17.1.0",
+    "@kcf-hub/kle-serial": "^0.17.0",
     "@nx/angular": "18.0.2",
     "json5": "^2.2.3",
     "react": "18.2.0",
