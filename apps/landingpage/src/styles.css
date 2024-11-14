@@ -2,3 +2,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Lato', 'Helvetica Neue', 'Arial', 'sans-serif';
+}
+
+.lato {
+  font-family: 'Lato', 'Helvetica Neue', 'Arial', 'sans-serif';
+}
+.raleway {
+  font-family: 'Raleway', 'Helvetica Neue', 'Arial', 'sans-serif';
+}

@@ -1,0 +1,50 @@
+/* Your styles goes here. */
+
+.backgroundCoverImage {
+  position: relative;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(purple-lines.png);
+}
+.backgroundCoverFilter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  backdrop-filter: saturate(30%);
+}
+
+.hexaButton {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  user-select: none;
+  padding: 0.4rem 2rem;
+
+  --btn-raise: 1rem;
+  clip-path: polygon(1rem 0%, calc(100% - 1rem) 0%, 100% 50%, calc(100% - 1rem) 100%, 1rem 100%, 0 50%);
+
+  transition-duration: 0.5s;
+
+  color: white;
+  background-color: #333;
+
+  &.primary {
+    background-color: #7f3178;
+    &:hover {
+      background-color: #1e122c;
+    }
+  }
+  &.secondary {
+    color: #fff;
+    background-color: #927dab;
+    &:hover {
+      background-color: #675c74;
+    }
+  }
+}
